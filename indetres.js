@@ -72,14 +72,6 @@ async function aplanar(productos) {
 wppconnect
   .create({
     session: "sessionName",
-    catchQR: (base64Qr, asciiQR, attempts, urlCode) => {
-      console.log("QR RECEIVED", base64Qr);
-      io.emit("qr", base64Qr);
-    },
-    statusFind: (statusSession, session) => {
-      console.log("Status Session: ", statusSession);
-      io.emit("status", statusSession);
-    },
     headless: false,
     useChrome: true,
   })

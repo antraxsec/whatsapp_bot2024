@@ -2,21 +2,14 @@ const express = require("express");
 const wppconnect = require("@wppconnect-team/wppconnect");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const http = require("http");
-const socketIo = require("socket.io");
-
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: {
-    origin: "http://localhost:3001", // Reemplaza con la URL de tu front-end
-    methods: ["GET", "POST"],
-  },
-});
 
 app.use(bodyParser.json());
 app.use(cors());
+
 let client;
+//nuevo
+// Funciones auxiliares
 let datosAPI = [];
 
 async function consumir_api(codigo) {
@@ -72,14 +65,6 @@ async function aplanar(productos) {
 wppconnect
   .create({
     session: "sessionName",
-    catchQR: (base64Qr, asciiQR, attempts, urlCode) => {
-      console.log("QR RECEIVED", base64Qr);
-      io.emit("qr", base64Qr);
-    },
-    statusFind: (statusSession, session) => {
-      console.log("Status Session: ", statusSession);
-      io.emit("status", statusSession);
-    },
     headless: false,
     useChrome: true,
   })
@@ -93,16 +78,10 @@ wppconnect
 
 function start(client) {
   client.onMessage(async (message) => {
+    // Aquí va la lógica para manejar los mensajes entrantes
     console.log("contacto", message.from);
     console.log("mensaje", message.body);
     console.log("Nombre", message.notifyName);
-
-    // Emitir evento de nuevo mensaje
-    io.emit("new_message", {
-      from: message.from,
-      body: message.body,
-      notifyName: message.notifyName,
-    });
   });
 }
 
@@ -139,10 +118,11 @@ app.post("/send-message", async (req, res) => {
   }
 });
 
-server.listen(3000, () => {
+app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
 
+// Funciones para manejar los diferentes flujos
 async function promocionFlow(contactId) {
   const contact = `591${contactId}@c.us`;
 
@@ -162,6 +142,8 @@ async function promocionFlow(contactId) {
     `🔗 Consíguelo aquí: https://multilaptops.net/producto/100205?t=wab&mkt=siat`,
   ].join("\n");
   await client.sendImage(contact, imagen1, "Samsung 100205", productoTexto1);
+
+  // Repite para las demás imágenes y textos de productos
 }
 
 async function reenviaProductoSKU(data, isReflow, contactId) {
@@ -277,6 +259,8 @@ async function reenviarProcesoCompra(contactId) {
     `✈️ *Envío nacional*: Si te encuentras en otro departamento o ciudad, elige esta opción y te lo enviaremos.`,
   ].join("\n");
   await client.sendImage(contact, imagen4, "Paso 4.2", texto4);
+
+  // Repite para los demás pasos
 }
 
 async function reenviarFormasPago(contactId) {
@@ -326,6 +310,8 @@ async function reenviarFormasPago(contactId) {
     `▸  Puede pagar en las siguientes monedas: dólares americanos USD, moneda nacional Bolivianos BOB.`,
   ].join("\n");
   await client.sendImage(contact, imagen4, "Efectivo", texto4);
+
+  // Repite para las demás formas de pago
 }
 
 async function asistenteGPT(contactId) {
