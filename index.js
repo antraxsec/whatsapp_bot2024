@@ -9,7 +9,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:3001", // Reemplaza con la URL de tu front-end
+    origin: "https://multistorev1-luancl3i5-antraxsecs-projects.vercel.app", // Reemplaza con la URL de tu front-end
     methods: ["GET", "POST"],
   },
 });
@@ -216,18 +216,34 @@ async function reenviaProductoSKU(data, isReflow, contactId) {
 async function reenviarUbicacion(contactId) {
   const contact = `591${contactId}@c.us`;
   const imagen =
-    "https://multilaptops.net/recursos/imagenes/tiendaonline/mapa-uyustus2.webp";
+    "https://multilaptops.net/recursos/imagenes/tiendaonline/tienda-2.jpg";
   const texto = [
-    `👉 Visítanos en *Multilaptops* - Ubicados en Calle Uyustus #990 (Esquina Calatayud, primera casa bajando por la acera izquierda), La Paz - Bolivia`,
+    `*Sucursal 1: Calatayud*`,
+    `👉 Calle Calatayud 593, (Casi esquina Angelica Azcui), La Paz - Bolivia`,
+    ``,
+    `▸ Habilitado para ventas en linea, reservas y entregas.`,
+    `▸ Solo se atiende a personas que han programado su visita presencial.`,
+    ``,
+    `Encuentra nuestra ubicación aquí: https://maps.app.goo.gl/vHs2dCjcNGni7jE77`,
+    ``,
+    `🚩 Recuerda programar tu visita. 😊`,
+  ].join("\n");
+  await client.sendImage(contact, imagen, "Ubicación", texto);
+
+  const imagen2 =
+    "https://multilaptops.net/recursos/imagenes/tiendaonline/mapa-uyustus2.webp";
+  const texto2 = [
+    `*Sucursal 2: Uyustus*`,
+    `👉 Calle Uyustus #990 (Esquina Calatayud, primera casa bajando por la acera izquierda), La Paz - Bolivia`,
     ``,
     `▸ Atendemos con cita previa de lunes a sábado.`,
     `▸ Durante feriados y días festivos, solo atendemos compras previamente confirmadas.`,
     ``,
     `Encuentra nuestra ubicación aquí: https://goo.gl/maps/g3gX5UsfrCkL2r7g8`,
     ``,
-    `🚩 Recuerda agendar tu visita para una mejor atención. ¡Te esperamos con gusto! 😊`,
+    `🚩 Recuerda programar tu visita. 😊`,
   ].join("\n");
-  await client.sendImage(contact, imagen, "Ubicación", texto);
+  await client.sendImage(contact, imagen2, "Ubicación", texto2);
 }
 
 async function reenviarProcesoCompra(contactId) {
